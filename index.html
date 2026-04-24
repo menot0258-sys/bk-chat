@@ -1,238 +1,233 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BK CHAT | THE FINAL ELITE</title>
-    <meta name="description" content="BK Chat is a high-performance social platform with a 3D interface, developed by Batoor Khan.">
-    <meta name="keywords" content="BK Chat, Batoor Khan, BK Developer, Social Media App, 3D UI">
-    <meta name="author" content="Batoor Khan">
+    <title>BK CHAT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-
-        :root {
-            --bg: #010204; --glass: rgba(255, 255, 255, 0.05); --text: #ffffff;
-            --border: rgba(255, 255, 255, 0.1); --card: rgba(255, 255, 255, 0.03);
-            --primary: #3b82f6; --elevated: 12px 12px 0px #000;
-        }
-
-        [data-theme="light"] {
-            --bg: #f0f4f8; --glass: rgba(255, 255, 255, 0.6); --text: #0f172a;
-            --border: rgba(0, 0, 0, 0.08); --card: rgba(255, 255, 255, 0.5);
-            --primary: #2563eb; --elevated: 8px 8px 0px rgba(0,0,0,0.1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; transition: 0.6s; }
-
-        /* THE "CRYSTAL" EFFECT */
-        .crystal { backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%); border: 1px solid var(--border); }
-
-        #sidebar { 
-            position: fixed; top: 0; left: -300px; width: 280px; height: 100%; 
-            background: var(--card); border-right: 1px solid var(--border); 
-            z-index: 9000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            padding: 50px 25px; display: flex; flex-direction: column; gap: 15px;
-        }
-        #sidebar.open { left: 0; box-shadow: 50px 0 100px rgba(0,0,0,0.8); }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 8500; display: none; backdrop-filter: blur(8px); }
-        .overlay.active { display: block; }
-
-        header { height: 80px; display: flex; align-items: center; justify-content: space-between; padding: 0 25px; z-index: 1000; position: relative; }
-        .logo { font-weight: 900; font-style: italic; font-size: 26px; letter-spacing: -2px; }
-
-        main { height: calc(100vh - 80px); overflow-y: auto; padding: 20px; z-index: 10; position: relative; }
-        .view { display: none; }
-        .view.active { display: block; }
-
-        /* ULTRA TRANSPARENT CHAT BOXES */
-        .bubble { 
-            max-width: 85%; padding: 16px 22px; border-radius: 28px; margin-bottom: 12px; font-size: 14px; 
-            background: rgba(255, 255, 255, 0.02); /* Ghost Transparent */
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            transition: 0.3s;
-        }
-        .bubble.me { 
-            align-self: flex-end; background: rgba(59, 130, 246, 0.15); 
-            border: 1px solid var(--primary); color: #fff; border-bottom-right-radius: 4px;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
-        }
-        .bubble.them { align-self: flex-start; border-bottom-left-radius: 4px; }
-
-        /* ELITE CARDS */
-        .card-ice { background: var(--card); border: 1px solid var(--border); border-radius: 30px; padding: 22px; margin-bottom: 20px; box-shadow: var(--elevated); }
-        .side-btn { width: 100%; padding: 18px; border-radius: 22px; border: none; background: none; color: var(--text); font-weight: 800; text-align: left; transition: 0.3s; }
-        .side-btn.active { background: var(--primary); color: white; transform: scale(1.05); }
-
-        .pfp { width: 45px; height: 45px; border-radius: 16px; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 900; border: 2px solid var(--border); overflow: hidden; }
-        .pfp img { width: 100%; height: 100%; object-fit: cover; }
-        .batoor-glow { border: 2px solid var(--primary) !important; box-shadow: 0 0 25px var(--primary); animation: glowPulse 2s infinite; }
-        @keyframes glowPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-        .input-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
-        input { background: none; border: none; color: inherit; width: 100%; outline: none; font-weight: 700; font-size: 15px; }
-
-        /* Proper Send Icon Button */
-        .send-btn { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .send-btn:active { transform: scale(0.9); }
-
-        #dm-view { position: fixed; inset: 0; background: var(--bg); z-index: 9500; display: none; flex-direction: column; }
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap');
+        :root { --glass: rgba(8, 10, 15, 0.98); --batoor: linear-gradient(135deg, #ff9d00, #ff0055); }
+        body { font-family: 'Outfit', sans-serif; background: #010203; color: #fff; height: 100vh; overflow: hidden; }
+        .glass-panel { background: var(--glass); backdrop-filter: blur(50px); border: 1px solid rgba(255,255,255,0.08); }
+        .batoor-text { background: var(--batoor); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
+        .nav-btn { opacity: 0.3; transition: 0.3s; font-weight: 900; font-size: 11px; text-transform: uppercase; }
+        .nav-btn.active { opacity: 1; color: #3b82f6; filter: drop-shadow(0 0 8px #3b82f6); }
+        .msg { max-width: 80%; margin-bottom: 8px; padding: 12px; border-radius: 20px; position: relative; }
+        .msg.me { background: #3b82f6; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .msg.them { background: #1f2937; align-self: flex-start; border-bottom-left-radius: 4px; }
+        .thumb { width: 100%; max-height: 200px; object-fit: contain; border-radius: 12px; margin-top: 8px; background: #000; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .reply-box { font-size: 10px; border-left: 2px solid #fff; padding-left: 8px; opacity: 0.7; margin-bottom: 4px; }
     </style>
 </head>
-<body onload="boot()">
+<body onload="checkPersistence()">
 
-    <div id="auth-gate" class="crystal" style="position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center;">
-        <div class="card-ice crystal" style="width:90%; max-width:400px; text-align:center;">
-            <h1 style="margin-bottom:30px; font-weight:900;">BK ELITE</h1>
-            <div class="input-wrap" style="margin-bottom:12px;"><input id="login-id" placeholder="USER ID"></div>
-            <div class="input-wrap" style="margin-bottom:25px;"><input id="login-key" type="password" placeholder="KEY"></div>
-            <button onclick="auth()" style="width:100%; background:var(--primary); color:white; border:none; padding:20px; border-radius:22px; font-weight:900;">INITIALIZE</button>
-        </div>
+    <div id="lightbox" onclick="this.style.display='none'" class="fixed inset-0 z-[10000] bg-black/90 hidden items-center justify-center p-4">
+        <img id="full-img" class="max-w-full max-h-full object-contain">
     </div>
 
-    <div id="sidebar" class="crystal">
-        <div class="logo" style="margin-bottom:40px;">BK<span>.</span>ELITE</div>
-        <button class="side-btn active" id="n-ch" onclick="nav('ch')">Messages</button>
-        <button class="side-btn" id="n-sq" onclick="nav('sq')">The Square</button>
-        <button class="side-btn" id="n-ld" onclick="nav('ld')">Ranks</button>
-        <button class="side-btn" id="n-pr" onclick="nav('pr')">Me Profile</button>
-        <button class="side-btn" style="margin-top:auto;" onclick="setTheme()">🌓 Change Theme</button>
-        <button onclick="logout()" style="color:red; border:none; background:none; font-weight:900; text-align:left; padding:18px;">Logout</button>
+    <div id="auth-screen" class="fixed inset-0 z-[9999] bg-[#010203] flex flex-col items-center justify-center p-8">
+        <h1 class="text-7xl font-black mb-12 italic">BK CHAT<span class="text-blue-500">.</span></h1>
+        <input id="login-user" type="text" placeholder="ID" class="w-full max-w-sm p-6 glass-panel rounded-[30px] text-center outline-none mb-4">
+        <input id="login-pass" type="password" placeholder="KEY" class="w-full max-w-sm p-6 glass-panel rounded-[30px] text-center outline-none mb-6">
+        <button onclick="handleLogin()" class="w-full max-w-sm bg-blue-600 py-6 rounded-[30px] font-black uppercase">Enter</button>
     </div>
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <header class="crystal">
-        <button onclick="toggleSidebar()" style="background:none; border:none; color:var(--text); font-size:28px;">☰</button>
-        <div class="logo">BK CHAT</div>
-        <div id="top-pfp" class="pfp"></div>
-    </header>
-
-    <main>
-        <div id="view-ch" class="view active">
-            <div class="input-wrap" style="margin-bottom:20px;"><input id="chat-find" placeholder="Search..." oninput="filter()"></div>
-            <div id="chat-list"></div>
-        </div>
-
-        <div id="view-sq" class="view">
-            <div class="card-ice crystal">
-                <input id="sq-input" placeholder="Broadcast anything..." style="font-size:18px; margin-bottom:15px;">
-                <button onclick="postFeed()" style="width:100%; background:var(--primary); color:white; border:none; padding:18px; border-radius:18px; font-weight:900;">POST</button>
-            </div>
-            <div id="sq-feed"></div>
-        </div>
-
-        <div id="view-ld" class="view"><div id="rank-list"></div></div>
-
-        <div id="view-pr" class="view">
-            <div class="card-ice crystal" style="text-align:center;">
-                <div id="me-pfp-big" class="pfp" style="width:120px; height:120px; margin: 0 auto 20px; border-radius:40px; font-size:40px;"></div>
-                <input type="file" id="file-in" style="display:none;" onchange="upPFP(this)">
-                <button onclick="document.getElementById('file-in').click()" style="color:var(--primary); background:none; border:none; font-weight:900; margin-bottom:25px;">CHOOSE IMAGE</button>
-                <div class="input-wrap"><input id="me-name" style="text-align:center;"></div>
-                <button onclick="saveMe()" style="width:100%; background:var(--primary); color:white; border:none; padding:20px; border-radius:20px; font-weight:900; margin-top:20px;">SAVE DATA</button>
-            </div>
-        </div>
-    </main>
-
-    <div id="dm-view" class="crystal">
-        <header class="crystal">
-            <button onclick="closeDM()" style="background:none; border:none; color:#fff; font-size:24px;">←</button>
-            <div id="dm-title" style="font-weight:900;">User</div>
-            <div id="dm-pfp" class="pfp" style="width:38px; height:38px;"></div>
+    <div id="app-ui" class="hidden flex flex-col h-screen">
+        <header class="p-8 pb-4 flex justify-between items-center border-b border-white/5">
+            <div onclick="location.reload()" class="font-black text-3xl italic cursor-pointer">BK CHAT</div>
+            <div id="aura-top" class="glass-panel px-5 py-2 rounded-2xl text-[10px] font-black uppercase">SYNC...</div>
         </header>
-        <div id="dm-msgs" style="flex:1; overflow-y:auto; padding:25px; display:flex; flex-direction:column; gap:5px;"></div>
-        <div style="padding:25px;"><div class="input-wrap crystal" style="padding:8px 10px 8px 20px;"><input id="dm-input" placeholder="Type elite message..."><button class="send-btn" onclick="send()">➤</button></div></div>
+
+        <main class="flex-1 relative overflow-hidden">
+            <div id="view-sq" class="absolute inset-0 overflow-y-auto no-scrollbar pb-40 px-6 pt-6">
+                <div id="sq-feed" class="space-y-4"></div>
+                <div class="fixed bottom-28 left-6 right-6 flex gap-2">
+                    <input id="sq-input" type="text" placeholder="Post to Square..." class="flex-1 p-4 glass-panel rounded-2xl outline-none text-sm">
+                    <button onclick="document.getElementById('img-sq').click()" class="p-4 glass-panel rounded-2xl">📷</button>
+                    <button onclick="postSquare()" class="bg-blue-600 px-6 rounded-2xl font-bold uppercase text-xs">Post</button>
+                    <input type="file" id="img-sq" class="hidden" accept="image/*">
+                </div>
+            </div>
+
+            <div id="view-ch" class="hidden absolute inset-0 overflow-y-auto no-scrollbar p-6">
+                <div class="flex gap-2 mb-6">
+                    <input id="friend-search" type="text" placeholder="User ID..." class="flex-1 p-4 glass-panel rounded-2xl outline-none">
+                    <button onclick="addFriend()" class="px-6 bg-blue-600 rounded-2xl font-black">+</button>
+                </div>
+                <div id="chat-list" class="space-y-3"></div>
+            </div>
+
+            <div id="view-dm" class="hidden absolute inset-0 flex flex-col bg-[#010203] z-[100]">
+                <div class="p-4 glass-panel flex items-center gap-4">
+                    <button onclick="nav('ch')" class="text-xl">←</button>
+                    <div id="dm-target-name" class="font-black uppercase text-sm">Chat</div>
+                </div>
+                <div id="dm-messages" class="flex-1 overflow-y-auto p-4 flex flex-col no-scrollbar"></div>
+                <div id="reply-preview" class="hidden px-4 py-2 bg-blue-900/30 text-[10px] flex justify-between items-center">
+                    <span id="reply-text">Replying...</span>
+                    <button onclick="cancelReply()">✕</button>
+                </div>
+                <div class="p-4 flex gap-2">
+                    <input id="dm-input" type="text" placeholder="Message..." class="flex-1 p-4 glass-panel rounded-2xl outline-none text-sm">
+                    <button onclick="document.getElementById('img-dm').click()" class="p-4 glass-panel rounded-2xl">📷</button>
+                    <button onclick="sendDM()" class="bg-blue-600 px-6 rounded-2xl font-black uppercase text-xs">Send</button>
+                    <input type="file" id="img-dm" class="hidden" accept="image/*">
+                </div>
+            </div>
+
+            <div id="view-ld" class="hidden absolute inset-0 overflow-y-auto no-scrollbar p-6 pt-6">
+                <div id="leaderboard-list" class="space-y-3"></div>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 flex glass-panel p-2 rounded-[35px] gap-2 z-[90]">
+            <button onclick="nav('sq')" id="nav-sq" class="nav-btn active px-6 py-3">Feed</button>
+            <button onclick="nav('ch')" id="nav-ch" class="nav-btn px-6 py-3">Friends</button>
+            <button onclick="nav('ld')" id="nav-ld" class="nav-btn px-6 py-3">Ranks</button>
+        </nav>
     </div>
 
     <script>
         const config = { apiKey: "AIzaSyA6jP9_1n97bKi6Eo2qtLVDf1U4xH_p8TQ", databaseURL: "https://i-am-here-44a35-default-rtdb.firebaseio.com" };
         firebase.initializeApp(config); const rdb = firebase.database();
-        let me = ""; let activeId = ""; let chats = [];
+        let me = ""; let activeChat = ""; let replyID = "";
 
-        function boot() {
-            const s = localStorage.getItem('bk_e_sess');
-            if(s) { me = s; document.getElementById('auth-gate').style.display='none'; load(); }
+        function checkPersistence() {
+            const saved = localStorage.getItem('bk_login');
+            if(saved) { const {u, p} = JSON.parse(saved); handleLogin(u, p); }
         }
 
-        function auth() {
-            const u = document.getElementById('login-id').value.trim().toLowerCase();
-            const p = document.getElementById('login-key').value;
-            if(!u || !p) return;
-            rdb.ref('users/'+u).once('value', s => {
-                if(!s.val()) rdb.ref('users/'+u).set({pass:p, name:u, aura:10});
-                else if(s.val().pass !== p) return alert("DENIED");
-                me = u; localStorage.setItem('bk_e_sess', u); location.reload();
+        function handleLogin(uIn, pIn) {
+            const u = uIn || document.getElementById('login-user').value.trim().toLowerCase();
+            const p = pIn || document.getElementById('login-pass').value; if(!u || !p) return;
+            rdb.ref(`users/${u}`).once('value', snap => {
+                if(!snap.exists()) rdb.ref(`users/${u}`).set({ pass: p, aura: 10 });
+                else if(snap.val().pass !== p) return alert("Wrong Key");
+                me = u; localStorage.setItem('bk_login', JSON.stringify({u, p}));
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-ui').classList.remove('hidden');
+                loadData();
             });
         }
 
-        function load() {
-            rdb.ref('users/'+me).on('value', s => {
-                const d = s.val(); const a = d?.pfp ? `<img src="${d.pfp}">` : me[0].toUpperCase();
-                document.getElementById('top-pfp').innerHTML = a;
-                document.getElementById('me-pfp-big').innerHTML = a;
-                document.getElementById('me-name').value = d?.name || me;
-                if(me==='batoor') document.getElementById('top-pfp').classList.add('batoor-glow');
-            });
+        async function postSquare() {
+            const txt = document.getElementById('sq-input').value;
+            const file = document.getElementById('img-sq').files[0];
+            let img = "";
+            if(file) { img = await new Promise(r => { const rd = new FileReader(); rd.onload = e => r(e.target.result); rd.readAsDataURL(file); }); }
+            if(!txt && !img) return;
+            rdb.ref('square').push({ user: me, text: txt, img: img, time: Date.now() });
+            document.getElementById('sq-input').value = ""; document.getElementById('img-sq').value = "";
+        }
 
-            rdb.ref(`friends/${me}`).on('value', snap => {
-                let list = []; let count = 0;
-                snap.forEach(f => {
-                    count++; const fid = f.key;
-                    const cid = me < fid ? me+"_"+fid : fid+"_"+me;
-                    rdb.ref(`chats/${cid}`).limitToLast(1).once('value', mS => {
-                        let last = {text: "...", time: 0}; mS.forEach(m => last = m.val());
-                        rdb.ref('users/'+fid).once('value', u => {
-                            list.push({id:fid, name:u.val()?.name||fid, pfp:u.val()?.pfp, last});
-                            if(list.length === count) { list.sort((a,b) => b.last.time - a.last.time); chats = list; render(list); }
-                        });
-                    });
+        function deletePost(id) { if(me === 'batoor') rdb.ref(`square/${id}`).remove(); }
+
+        function addFriend() {
+            const id = document.getElementById('friend-search').value.trim().toLowerCase();
+            if(!id || id === me) return;
+            rdb.ref(`users/${id}`).once('value', s => {
+                if(s.exists()) rdb.ref(`friends/${me}/${id}`).set(true).then(()=>alert("Added!"));
+                else alert("User not found");
+            });
+        }
+
+        function openChat(id) {
+            activeChat = id; document.getElementById('dm-target-name').innerText = `@${id}`; nav('dm');
+            const chatID = me < id ? `${me}_${id}` : `${id}_${me}`;
+            rdb.ref(`chats/${chatID}`).on('value', snap => {
+                const box = document.getElementById('dm-messages'); box.innerHTML = "";
+                snap.forEach(m => {
+                    const d = m.val(); const isMe = d.sender === me;
+                    box.innerHTML += `
+                        <div class="msg ${isMe?'me':'them'}" onclick="setReply('${d.text}')" ondblclick="react('${m.key}')">
+                            ${d.reply ? `<div class="reply-box">${d.reply}</div>` : ''}
+                            <p class="text-sm">${d.text||''}</p>
+                            ${d.img ? `<img src="${d.img}" class="thumb" onclick="fullImg('${d.img}')">` : ''}
+                            ${d.react ? `<span class="absolute -bottom-2 right-2 text-[10px]">❤️</span>` : ''}
+                        </div>`;
                 });
-            });
-
-            rdb.ref('square').on('value', s => {
-                const f = document.getElementById('sq-feed'); f.innerHTML = "";
-                s.forEach(p => { const d = p.val(); f.innerHTML = `<div class="card-ice crystal">${d.user === me ? `<button onclick="rdb.ref('square/${p.key}').remove()" style="float:right; color:red; border:none; background:none; font-size:10px; font-weight:900;">DELETE</button>` : ''}<b>@${d.user}</b><p style="margin-top:10px; opacity:0.8;">${d.text}</p></div>` + f.innerHTML; });
-            });
-        }
-
-        function render(data) {
-            const l = document.getElementById('chat-list'); l.innerHTML = "";
-            data.forEach(c => {
-                l.innerHTML += `<div class="card-ice crystal" onclick="openDM('${c.id}')" style="display:flex; align-items:center; gap:15px; cursor:pointer;">
-                    <div class="pfp ${c.id==='batoor'?'batoor-glow':''}">${c.pfp?`<img src="${c.pfp}">`:c.id[0].toUpperCase()}</div>
-                    <div style="flex:1"><b>${c.name}</b><p style="font-size:12px; opacity:0.5;">${c.last.text}</p></div>
-                </div>`;
-            });
-        }
-
-        function openDM(id) {
-            activeId = id; document.getElementById('dm-view').style.display='flex';
-            const cid = me < id ? me+"_"+id : id+"_"+me;
-            rdb.ref('users/'+id).once('value', s => {
-                document.getElementById('dm-title').innerText = s.val()?.name || id;
-                document.getElementById('dm-pfp').innerHTML = s.val()?.pfp ? `<img src="${s.val().pfp}">` : id[0].toUpperCase();
-            });
-            rdb.ref(`chats/${cid}`).on('value', snap => {
-                const box = document.getElementById('dm-msgs'); box.innerHTML = "";
-                snap.forEach(m => { const d = m.val(); box.innerHTML += `<div class="bubble ${d.sender===me?'me':'them'}">${d.text}</div>`; });
                 box.scrollTo(0, box.scrollHeight);
             });
         }
 
-        function upPFP(input) { if(input.files[0]) { const r = new FileReader(); r.onload = e => rdb.ref('users/'+me+'/pfp').set(e.target.result); r.readAsDataURL(input.files[0]); } }
-        function send() { const v = document.getElementById('dm-input').value; if(v) { rdb.ref(`chats/${(me<activeId?me+"_"+activeId:activeId+"_"+me)}`).push({sender:me, text:v, time:Date.now()}); document.getElementById('dm-input').value = ""; } }
-        function saveMe() { rdb.ref('users/'+me).update({name: document.getElementById('me-name').value}).then(()=>alert("Saved")); }
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('active'); }
-        function nav(v) { document.querySelectorAll('.view').forEach(e => e.classList.remove('active')); document.querySelectorAll('.side-btn').forEach(e => e.classList.remove('active')); document.getElementById('view-'+v).classList.add('active'); document.getElementById('n-'+v).classList.add('active'); toggleSidebar(); }
-        function setTheme() { const t = document.body.getAttribute('data-theme')==='light'?'dark':'light'; document.body.setAttribute('data-theme', t); localStorage.setItem('bk_theme', t); }
-        function closeDM() { document.getElementById('dm-view').style.display='none'; }
-        function postFeed() { const v = document.getElementById('sq-input').value; if(v) rdb.ref('square').push({user: me, text:v}).then(()=>document.getElementById('sq-input').value=""); }
+        async function sendDM() {
+            const txt = document.getElementById('dm-input').value;
+            const file = document.getElementById('img-dm').files[0];
+            let img = "";
+            if(file) { img = await new Promise(r => { const rd = new FileReader(); rd.onload = e => r(e.target.result); rd.readAsDataURL(file); }); }
+            if(!txt && !img) return;
+            const chatID = me < activeChat ? `${me}_${activeChat}` : `${activeChat}_${me}`;
+            rdb.ref(`chats/${chatID}`).push({ sender: me, text: txt, img: img, reply: replyID });
+            document.getElementById('dm-input').value = ""; document.getElementById('img-dm').value = ""; cancelReply();
+        }
+
+        function setReply(t) { replyID = t; document.getElementById('reply-preview').classList.remove('hidden'); document.getElementById('reply-text').innerText = `Replying: ${t.substring(0,20)}...`; }
+        function cancelReply() { replyID = ""; document.getElementById('reply-preview').classList.add('hidden'); }
+        function react(key) { const chatID = me < activeChat ? `${me}_${activeChat}` : `${activeChat}_${me}`; rdb.ref(`chats/${chatID}/${key}/react`).set(true); }
+        function fullImg(src) { document.getElementById('full-img').src = src; document.getElementById('lightbox').style.display = 'flex'; }
+
+        function loadData() {
+            rdb.ref('square').on('value', snap => {
+                const f = document.getElementById('sq-feed'); f.innerHTML = "";
+                snap.forEach(c => {
+                    const d = c.val(); const isB = d.user === 'batoor';
+                    f.innerHTML = `
+                        <div class="p-5 glass-panel rounded-3xl ${isB?'border-orange-500/50 border-2':''}">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] ${isB?'batoor-text':'text-blue-500'} font-black uppercase">@${d.user}</span>
+                                ${me === 'batoor' ? `<button onclick="deletePost('${c.key}')" class="text-[9px] bg-red-500/20 px-2 py-1 rounded">DEL</button>` : ''}
+                            </div>
+                            <p class="text-sm font-light">${d.text||''}</p>
+                            ${d.img ? `<img src="${d.img}" class="thumb" onclick="fullImg('${d.img}')">` : ''}
+                        </div>` + f.innerHTML;
+                });
+            });
+
+            rdb.ref(`friends/${me}`).on('value', snap => {
+                const list = document.getElementById('chat-list'); list.innerHTML = "";
+                snap.forEach(f => {
+                    list.innerHTML += `<div onclick="openChat('${f.key}')" class="p-5 glass-panel rounded-2xl flex justify-between items-center border-l-4 border-blue-600 cursor-pointer">
+                        <span class="font-black text-xs uppercase">@${f.key}</span>
+                        <span class="text-[9px] bg-blue-500/20 text-blue-500 px-2 py-1 rounded">CHAT</span>
+                    </div>`;
+                });
+            });
+
+            rdb.ref('users').on('value', snap => {
+                const list = document.getElementById('leaderboard-list'); list.innerHTML = "";
+                const users = snap.val();
+                let uArr = []; for(let id in users) { if(id !== 'batoor') uArr.push({id, ...users[id]}); }
+                uArr.sort((a,b) => (b.aura||0) - (a.aura||0));
+
+                const topEl = document.getElementById('aura-top');
+                if(me === 'batoor') topEl.innerHTML = `<span class="batoor-text">AURA: ∞</span>`;
+                else topEl.innerText = `AURA: ${users[me].aura||0}`;
+
+                list.innerHTML = `<div class="p-5 glass-panel rounded-3xl border-2 border-orange-500/40 flex justify-between items-center">
+                    <span class="batoor-text text-lg">1. BATOOR</span><span class="text-orange-500 font-black text-xl">∞</span>
+                </div>`;
+                uArr.forEach((u, i) => {
+                    list.innerHTML += `<div class="p-4 glass-panel rounded-2xl flex justify-between items-center ${u.id===me?'border border-blue-500':''}">
+                        <span class="font-bold text-xs opacity-70 uppercase">${i+2}. ${u.id}</span>
+                        <span class="font-black text-blue-500">${u.aura||0}</span>
+                    </div>`;
+                });
+            });
+        }
+
+        function nav(v) {
+            ['sq', 'ch', 'ld', 'dm'].forEach(x => { 
+                if(document.getElementById('view-'+x)) document.getElementById('view-'+x).classList.add('hidden');
+                if(document.getElementById('nav-'+x)) document.getElementById('nav-'+x).classList.remove('active');
+            });
+            document.getElementById('view-'+v).classList.remove('hidden');
+            if(document.getElementById('nav-'+v)) document.getElementById('nav-'+v).classList.add('active');
+        }
         function logout() { localStorage.clear(); location.reload(); }
-        function filter() { const q = document.getElementById('chat-find').value.toLowerCase(); render(chats.filter(c => c.name.toLowerCase().includes(q))); }
     </script>
 </body>
 </html>
