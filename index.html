@@ -3,28 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BK CHAT - Liquid Edition</title>
+    <title>BK CHAT - Liquid Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap');
-        :root { --accent: #008069; --batoor: linear-gradient(135deg, #ff9d00, #ff0055); --oily-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.1); }
-        body { font-family: 'Outfit', sans-serif; background: #f1f5f9; overflow: hidden; height: 100vh; color: #0f172a; }
-        .oily-card { background: #ffffff; border-radius: 28px; box-shadow: var(--oily-shadow); border: 1px solid rgba(255, 255, 255, 1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        :root { --accent: #008069; --batoor: linear-gradient(135deg, #ff9d00, #ff0055); --oily: 0 25px 60px -12px rgba(0,0,0,0.18); }
+        body { font-family: 'Outfit', sans-serif; background: #f1f5f9; overflow: hidden; height: 100vh; }
+        .oily-card { background: #fff; border-radius: 30px; box-shadow: var(--oily); border: 1px solid #fff; transition: 0.3s; }
         .viewport { display: flex; width: 200%; height: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .screen { width: 50%; height: 100vh; overflow-y: auto; padding-top: 90px; padding-bottom: 120px; }
-        #side-bar { position: fixed; left: -100%; top: 0; width: 80%; max-width: 280px; height: 100%; background: white; z-index: 3000; transition: 0.4s ease; box-shadow: 30px 0 60px rgba(0,0,0,0.2); }
+        #side-bar { position: fixed; left: -100%; top: 0; width: 280px; height: 100%; background: white; z-index: 3000; transition: 0.4s; box-shadow: 30px 0 60px rgba(0,0,0,0.15); }
         #side-bar.open { left: 0; }
+        video { transform: scaleX(-1); object-fit: cover; border-radius: 24px; background: #000; width: 100%; height: 100%; }
+        #localVideo { width: 100px; height: 140px; position: absolute; bottom: 120px; right: 20px; border: 2px solid white; z-index: 10; }
         .batoor-text { background: var(--batoor); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
-        .msg-me { background: #e2ffc7; align-self: flex-end; border-radius: 20px 20px 4px 20px; }
-        .msg-them { background: white; align-self: flex-start; border-radius: 20px 20px 20px 4px; }
-        
-        /* Mirror View for Video */
-        video { transform: scaleX(-1); object-fit: cover; border-radius: 24px; background: #000; }
-        #localVideo { width: 100px; height: 150px; position: absolute; bottom: 100px; right: 20px; border: 2px solid white; z-index: 10; }
-        #remoteVideo { width: 100%; height: 100%; }
+        .msg-me { background: #e2ffc7; align-self: flex-end; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .msg-them { background: white; align-self: flex-start; border-radius: 20px 20px 20px 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body onload="checkPersistence()">
@@ -39,35 +36,39 @@
 
     <div id="overlay" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/30 backdrop-blur-md z-[2500] hidden"></div>
     <div id="side-bar" class="flex flex-col">
-        <div class="p-8 bg-gray-900 text-white rounded-br-[50px] shadow-2xl">
-            <div class="w-14 h-14 bg-green-500 rounded-2xl mb-4 flex items-center justify-center text-xl font-black">BK</div>
+        <div class="p-8 bg-gray-900 text-white rounded-br-[50px] shadow-2xl relative">
+            <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="uploadLogo(this)">
+            <label for="logo-upload" class="cursor-pointer">
+                <img id="user-logo" src="https://ui-avatars.com/api/?name=BK&background=008069&color=fff" class="w-16 h-16 rounded-2xl mb-4 object-cover shadow-lg border-2 border-white/20">
+            </label>
             <h2 id="side-user" class="text-xl font-black uppercase">@Guest</h2>
         </div>
         <nav class="p-6 space-y-3">
-            <button onclick="slide(0, 'Chats')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-message"></i> Chats</button>
-            <button onclick="slide(1, 'Ranks')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-crown"></i> Ranks</button>
-            <button onclick="logout()" class="w-full text-left p-4 text-red-500 font-bold mt-10">Disconnect</button>
+            <button onclick="slide(0, 'Chats')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-message text-green-500"></i> Chats</button>
+            <button onclick="slide(1, 'Ranks')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-crown text-orange-500"></i> Ranks</button>
+            <button onclick="logout()" class="w-full text-left p-4 text-red-500 font-bold mt-10">Logout</button>
         </nav>
     </div>
 
     <div id="main-viewport" class="viewport">
         <section class="screen px-5">
             <div class="mb-8 oily-card p-2 flex gap-2">
-                <input id="friend-search" type="text" placeholder="User ID..." class="flex-1 bg-transparent px-4 outline-none font-bold">
+                <input id="friend-search" type="text" placeholder="Add User ID..." class="flex-1 bg-transparent px-4 outline-none font-bold">
                 <button onclick="addFriend()" class="bg-green-600 text-white w-12 h-12 rounded-2xl font-black"><i class="fa-solid fa-plus"></i></button>
             </div>
             <div id="chat-list" class="space-y-4"></div>
         </section>
-        <section class="screen px-5"><div id="leaderboard-list" class="space-y-5"></div></section>
+        <section class="screen px-5">
+            <div id="leaderboard-list" class="space-y-4"></div>
+        </section>
     </div>
 
-    <div id="call-screen" class="fixed inset-0 bg-black z-[5000] hidden flex flex-col items-center justify-center">
+    <div id="call-screen" class="fixed inset-0 bg-black z-[5000] hidden">
         <video id="remoteVideo" autoplay playsinline></video>
         <video id="localVideo" autoplay playsinline muted></video>
-        <div class="absolute bottom-10 flex gap-10">
+        <div class="absolute bottom-16 left-0 w-full flex justify-center gap-8">
             <button onclick="endCall()" class="w-16 h-16 bg-red-500 text-white rounded-full text-2xl shadow-2xl"><i class="fa-solid fa-phone-slash"></i></button>
         </div>
-        <h2 id="call-status" class="absolute top-20 text-white font-bold tracking-widest uppercase">Calling...</h2>
     </div>
 
     <div id="view-dm" class="fixed inset-0 bg-[#f8fafc] z-[4000] hidden flex flex-col">
@@ -77,23 +78,22 @@
                 <h3 id="dm-target-name" class="font-black uppercase">User</h3>
             </div>
             <div class="flex gap-4">
-                <button onclick="startCall('voice')" class="text-green-600 text-xl"><i class="fa-solid fa-phone"></i></button>
-                <button onclick="startCall('video')" class="text-blue-600 text-xl"><i class="fa-solid fa-video"></i></button>
+                <button onclick="initiateCall('video')" class="w-10 h-10 text-green-600"><i class="fa-solid fa-video"></i></button>
             </div>
         </div>
         <div id="dm-messages" class="flex-1 overflow-y-auto p-5 flex flex-col space-y-2 no-scrollbar"></div>
         <div class="p-6 oily-card m-4 flex gap-3">
-            <input id="dm-input" type="text" placeholder="Message..." class="flex-1 bg-transparent px-2 outline-none">
-            <button onclick="sendDM()" class="bg-green-600 text-white w-14 h-12 rounded-2xl"><i class="fa-solid fa-paper-plane"></i></button>
+            <input id="dm-input" type="text" placeholder="Message..." class="flex-1 bg-transparent outline-none">
+            <button onclick="sendDM()" class="bg-green-600 text-white w-12 h-10 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div id="auth-screen" class="fixed inset-0 z-[6000] bg-[#f1f5f9] flex flex-col items-center justify-center p-10 text-center">
+    <div id="auth-screen" class="fixed inset-0 z-[6000] bg-[#f1f5f9] flex flex-col items-center justify-center p-10">
         <h1 class="text-6xl font-black italic text-gray-900 mb-8">BK<span class="text-green-600">.</span></h1>
         <div class="w-full max-w-xs space-y-4">
             <div class="oily-card p-1"><input id="login-user" type="text" placeholder="IDENTITY" class="w-full p-4 bg-transparent outline-none font-bold text-center"></div>
-            <div class="oily-card p-1"><input id="login-pass" type="password" placeholder="ACCESS KEY" class="w-full p-4 bg-transparent outline-none font-bold text-center"></div>
-            <button onclick="handleLogin()" class="w-full bg-gray-900 text-white py-5 rounded-[30px] font-black shadow-2xl">ESTABLISH SESSION</button>
+            <div class="oily-card p-1"><input id="login-pass" type="password" placeholder="KEY" class="w-full p-4 bg-transparent outline-none font-bold text-center"></div>
+            <button onclick="handleLogin()" class="w-full bg-gray-900 text-white py-5 rounded-[30px] font-black shadow-2xl">CONNECT</button>
         </div>
     </div>
 
@@ -101,12 +101,6 @@
         const config = { apiKey: "AIzaSyA6jP9_1n97bKi6Eo2qtLVDf1U4xH_p8TQ", databaseURL: "https://i-am-here-44a35-default-rtdb.firebaseio.com" };
         firebase.initializeApp(config); const rdb = firebase.database();
         let me = ""; let activeChat = ""; let localStream;
-
-        function requestNotify() {
-            if ("Notification" in window) {
-                Notification.requestPermission().then(p => { if(p === 'granted') console.log("Alerts Enabled"); });
-            }
-        }
 
         function toggleSidebar(open) {
             document.getElementById('side-bar').classList.toggle('open', open);
@@ -123,64 +117,86 @@
             const u = document.getElementById('login-user').value.trim().toLowerCase();
             const p = document.getElementById('login-pass').value; if(!u || !p) return;
             rdb.ref(`users/${u}`).once('value', snap => {
-                if(!snap.exists()) rdb.ref(`users/${u}`).set({ pass: p, aura: 10 });
+                if(!snap.exists()) rdb.ref(`users/${u}`).set({ pass: p, aura: 10, logo: "" });
                 else if(snap.val().pass !== p) return alert("Wrong Key");
                 me = u; localStorage.setItem('bk_login', JSON.stringify({u, p}));
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('side-user').innerText = `@${me}`;
-                requestNotify();
-                listenForCalls();
-                loadData();
+                if(snap.val().logo) document.getElementById('user-logo').src = snap.val().logo;
+                setupSystem();
             });
         }
 
+        function setupSystem() {
+            Notification.requestPermission();
+            listenForCalls();
+            loadData();
+        }
+
         function loadData() {
+            // RANKS LOGIC (FIXED)
+            rdb.ref('users').on('value', snap => {
+                const list = document.getElementById('leaderboard-list'); list.innerHTML = "";
+                let users = []; snap.forEach(u => { if(u.key !== 'batoor') users.push({id: u.key, ...u.val()}); });
+                users.sort((a,b) => (b.aura||0) - (a.aura||0));
+                
+                document.getElementById('aura-pill').innerText = `AURA: ${snap.val()[me].aura||0}`;
+                list.innerHTML = `<div class="oily-card p-6 border-2 border-orange-200 flex justify-between items-center"><span class="batoor-text text-xl italic uppercase">1. Batoor Khan</span><span class="text-orange-500 font-black text-2xl">∞</span></div>`;
+                users.forEach((u, i) => {
+                    list.innerHTML += `<div class="oily-card p-5 flex justify-between items-center ${u.id===me?'ring-2 ring-green-400':''}">
+                        <div class="flex items-center gap-4"><span class="text-gray-300 font-black">#${i+2}</span><span class="font-black uppercase">@${u.id}</span></div>
+                        <span class="font-black text-green-600 text-lg">${u.aura||0}</span>
+                    </div>`;
+                });
+            });
+
+            // CHATS LOGIC
             rdb.ref(`friends/${me}`).on('value', snap => {
                 const list = document.getElementById('chat-list'); list.innerHTML = "";
                 let arr = []; snap.forEach(f => { arr.push({id: f.key, last: f.val().last || 0}); });
                 arr.sort((a,b) => b.last - a.last).forEach(f => {
                     list.innerHTML += `<div onclick="updateTimeAndOpen('${f.id}')" class="oily-card p-5 flex items-center gap-4 cursor-pointer">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-black">${f.id[0].toUpperCase()}</div>
-                        <div class="flex-1"><h4 class="font-black">@${f.id}</h4><p class="text-xs text-green-500 font-bold">Online</p></div>
+                        <div class="w-14 h-14 rounded-2xl bg-green-600 flex items-center justify-center text-white font-black">${f.id[0].toUpperCase()}</div>
+                        <div class="flex-1"><h4 class="font-black uppercase">@${f.id}</h4><p class="text-xs text-green-500 font-bold uppercase">Online</p></div>
                     </div>`;
                 });
             });
-            // Listen for background messages for notifications
-            rdb.ref(`chats`).on('child_added', snap => {
-                if(snap.key.includes(me)) {
-                    snap.ref.limitToLast(1).on('child_added', m => {
-                        const d = m.val();
-                        if(d.sender !== me && d.time > Date.now() - 5000) {
-                            if(document.hidden) new Notification("BK CHAT", { body: `@${d.sender}: ${d.text}` });
-                        }
-                    });
-                }
-            });
         }
 
-        async function startCall(type) {
+        async function initiateCall(type) {
             document.getElementById('call-screen').classList.remove('hidden');
-            localStream = await navigator.mediaDevices.getUserMedia({ video: type==='video', audio: true });
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             document.getElementById('localVideo').srcObject = localStream;
-            rdb.ref(`calls/${activeChat}`).set({ caller: me, type: type, status: 'ringing' });
+            rdb.ref(`calls/${activeChat}`).set({ from: me, type, status: 'ringing', time: Date.now() });
         }
 
         function listenForCalls() {
             rdb.ref(`calls/${me}`).on('value', snap => {
                 const call = snap.val();
                 if(call && call.status === 'ringing') {
-                    if(confirm(`Incoming ${call.type} call from @${call.caller}`)) {
+                    if(confirm(`Incoming Video from @${call.from}?`)) {
                         rdb.ref(`calls/${me}`).update({ status: 'connected' });
-                        startCall(call.type); // Simplification for demo
-                    }
+                        initiateCall('video');
+                    } else { rdb.ref(`calls/${me}`).remove(); }
                 }
             });
+        }
+
+        function uploadLogo(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    document.getElementById('user-logo').src = base64;
+                    rdb.ref(`users/${me}`).update({ logo: base64 });
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
         function endCall() {
             if(localStream) localStream.getTracks().forEach(t => t.stop());
             document.getElementById('call-screen').classList.add('hidden');
-            rdb.ref(`calls/${activeChat}`).remove();
             rdb.ref(`calls/${me}`).remove();
         }
 
@@ -191,13 +207,14 @@
             const cid = me < id ? `${me}_${id}` : `${id}_${me}`;
             rdb.ref(`chats/${cid}`).on('value', snap => {
                 const box = document.getElementById('dm-messages'); box.innerHTML = "";
-                snap.forEach(m => { 
+                snap.forEach(m => {
                     const d = m.val();
                     box.innerHTML += `<div class="p-4 msg-bubble max-w-[80%] text-sm ${d.sender===me?'msg-me':'msg-them'}">${d.text}</div>`;
                 });
                 box.scrollTo(0, box.scrollHeight);
             });
         }
+
         function sendDM() {
             const txt = document.getElementById('dm-input').value; if(!txt) return;
             rdb.ref(`friends/${me}/${activeChat}`).update({ last: Date.now() });
@@ -205,6 +222,7 @@
             rdb.ref(`chats/${cid}`).push({ sender: me, text: txt, time: Date.now() });
             document.getElementById('dm-input').value = "";
         }
+
         function closeDM() { document.getElementById('view-dm').classList.add('hidden'); }
         function addFriend() {
             const id = document.getElementById('friend-search').value.trim().toLowerCase();
