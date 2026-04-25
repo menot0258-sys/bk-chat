@@ -13,83 +13,100 @@
         :root { --accent: #008069; --batoor: linear-gradient(135deg, #ff9d00, #ff0055); --oily-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.1); }
         body { font-family: 'Outfit', sans-serif; background: #f1f5f9; overflow: hidden; height: 100vh; color: #0f172a; }
         .oily-card { background: #ffffff; border-radius: 28px; box-shadow: var(--oily-shadow); border: 1px solid rgba(255, 255, 255, 1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .oily-card:active { transform: scale(0.97); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .viewport { display: flex; width: 200%; height: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .screen { width: 50%; height: 100vh; overflow-y: auto; padding-top: 90px; padding-bottom: 120px; -webkit-overflow-scrolling: touch; }
-        #side-bar { position: fixed; left: -100%; top: 0; width: 80%; max-width: 280px; height: 100%; background: white; z-index: 3000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 30px 0 60px rgba(0,0,0,0.2); }
+        .screen { width: 50%; height: 100vh; overflow-y: auto; padding-top: 90px; padding-bottom: 120px; }
+        #side-bar { position: fixed; left: -100%; top: 0; width: 80%; max-width: 280px; height: 100%; background: white; z-index: 3000; transition: 0.4s ease; box-shadow: 30px 0 60px rgba(0,0,0,0.2); }
         #side-bar.open { left: 0; }
         .batoor-text { background: var(--batoor); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .msg-me { background: #e2ffc7; align-self: flex-end; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        .msg-them { background: white; align-self: flex-start; border-radius: 20px 20px 20px 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .msg-me { background: #e2ffc7; align-self: flex-end; border-radius: 20px 20px 4px 20px; }
+        .msg-them { background: white; align-self: flex-start; border-radius: 20px 20px 20px 4px; }
+        
+        /* Mirror View for Video */
+        video { transform: scaleX(-1); object-fit: cover; border-radius: 24px; background: #000; }
+        #localVideo { width: 100px; height: 150px; position: absolute; bottom: 100px; right: 20px; border: 2px solid white; z-index: 10; }
+        #remoteVideo { width: 100%; height: 100%; }
     </style>
 </head>
 <body onload="checkPersistence()">
 
     <header class="fixed top-0 w-full max-w-md left-1/2 -translate-x-1/2 z-[100] bg-white/70 backdrop-blur-xl px-6 py-5 flex justify-between items-center border-b border-white">
         <div class="flex items-center gap-4">
-            <button onclick="toggleSidebar(true)" class="w-11 h-11 flex items-center justify-center rounded-2xl bg-white shadow-md active:scale-90 transition-all"><i class="fa-solid fa-bars-staggered text-gray-800"></i></button>
-            <h1 id="screen-title" class="text-2xl font-black tracking-tight text-gray-900">Chats</h1>
+            <button onclick="toggleSidebar(true)" class="w-11 h-11 oily-card flex items-center justify-center"><i class="fa-solid fa-bars-staggered"></i></button>
+            <h1 id="screen-title" class="text-2xl font-black">Chats</h1>
         </div>
-        <div id="aura-pill" class="bg-white/90 px-5 py-2 rounded-2xl text-[11px] font-black shadow-lg border border-gray-100 italic">AURA: 0</div>
+        <div id="aura-pill" class="bg-white/90 px-5 py-2 rounded-2xl text-[11px] font-black shadow-lg italic">AURA: 0</div>
     </header>
 
     <div id="overlay" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/30 backdrop-blur-md z-[2500] hidden"></div>
     <div id="side-bar" class="flex flex-col">
         <div class="p-8 bg-gray-900 text-white rounded-br-[50px] shadow-2xl">
-            <div class="w-14 h-14 bg-gradient-to-tr from-green-400 to-green-600 rounded-2xl mb-4 shadow-lg flex items-center justify-center text-xl font-black">BK</div>
+            <div class="w-14 h-14 bg-green-500 rounded-2xl mb-4 flex items-center justify-center text-xl font-black">BK</div>
             <h2 id="side-user" class="text-xl font-black uppercase">@Guest</h2>
         </div>
-        <nav class="p-6 space-y-3 flex-1">
-            <button onclick="slide(0, 'Chats')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-message text-green-600"></i> Conversations</button>
-            <button onclick="slide(1, 'Ranks')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-crown text-yellow-500"></i> Hall of Fame</button>
-            <button onclick="logout()" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 text-red-500 mt-10"><i class="fa-solid fa-right-from-bracket"></i> Disconnect</button>
+        <nav class="p-6 space-y-3">
+            <button onclick="slide(0, 'Chats')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-message"></i> Chats</button>
+            <button onclick="slide(1, 'Ranks')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-crown"></i> Ranks</button>
+            <button onclick="logout()" class="w-full text-left p-4 text-red-500 font-bold mt-10">Disconnect</button>
         </nav>
     </div>
 
     <div id="main-viewport" class="viewport">
-        <section class="screen bg-transparent no-scrollbar px-5">
-            <div class="mb-8">
-                <div class="oily-card p-2 flex gap-2">
-                    <input id="friend-search" type="text" placeholder="Enter User ID..." class="flex-1 bg-transparent px-4 py-2 outline-none font-bold text-sm">
-                    <button onclick="addFriend()" class="bg-green-600 text-white w-12 h-12 rounded-2xl shadow-lg active:scale-90 font-black"><i class="fa-solid fa-plus"></i></button>
-                </div>
+        <section class="screen px-5">
+            <div class="mb-8 oily-card p-2 flex gap-2">
+                <input id="friend-search" type="text" placeholder="User ID..." class="flex-1 bg-transparent px-4 outline-none font-bold">
+                <button onclick="addFriend()" class="bg-green-600 text-white w-12 h-12 rounded-2xl font-black"><i class="fa-solid fa-plus"></i></button>
             </div>
             <div id="chat-list" class="space-y-4"></div>
         </section>
+        <section class="screen px-5"><div id="leaderboard-list" class="space-y-5"></div></section>
+    </div>
 
-        <section class="screen bg-transparent no-scrollbar px-5">
-            <div id="leaderboard-list" class="space-y-5"></div>
-        </section>
+    <div id="call-screen" class="fixed inset-0 bg-black z-[5000] hidden flex flex-col items-center justify-center">
+        <video id="remoteVideo" autoplay playsinline></video>
+        <video id="localVideo" autoplay playsinline muted></video>
+        <div class="absolute bottom-10 flex gap-10">
+            <button onclick="endCall()" class="w-16 h-16 bg-red-500 text-white rounded-full text-2xl shadow-2xl"><i class="fa-solid fa-phone-slash"></i></button>
+        </div>
+        <h2 id="call-status" class="absolute top-20 text-white font-bold tracking-widest uppercase">Calling...</h2>
     </div>
 
     <div id="view-dm" class="fixed inset-0 bg-[#f8fafc] z-[4000] hidden flex flex-col">
-        <div class="p-5 bg-white/80 backdrop-blur-xl flex items-center gap-4 border-b border-gray-100">
-            <button onclick="closeDM()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100"><i class="fa-solid fa-chevron-left"></i></button>
-            <div><h3 id="dm-target-name" class="font-black text-gray-900 uppercase">User</h3></div>
-        </div>
-        <div id="dm-messages" class="flex-1 overflow-y-auto p-5 flex flex-col no-scrollbar space-y-2"></div>
-        <div class="p-6">
-            <div class="oily-card p-2 flex gap-3 items-center">
-                <input id="dm-input" type="text" placeholder="Type a message..." class="flex-1 bg-transparent px-4 py-3 outline-none font-medium">
-                <button onclick="sendDM()" class="bg-green-600 text-white w-14 h-12 rounded-2xl shadow-xl active:scale-95"><i class="fa-solid fa-paper-plane"></i></button>
+        <div class="p-5 bg-white flex items-center justify-between border-b">
+            <div class="flex items-center gap-4">
+                <button onclick="closeDM()" class="w-10 h-10 bg-gray-100 rounded-xl"><i class="fa-solid fa-chevron-left"></i></button>
+                <h3 id="dm-target-name" class="font-black uppercase">User</h3>
             </div>
+            <div class="flex gap-4">
+                <button onclick="startCall('voice')" class="text-green-600 text-xl"><i class="fa-solid fa-phone"></i></button>
+                <button onclick="startCall('video')" class="text-blue-600 text-xl"><i class="fa-solid fa-video"></i></button>
+            </div>
+        </div>
+        <div id="dm-messages" class="flex-1 overflow-y-auto p-5 flex flex-col space-y-2 no-scrollbar"></div>
+        <div class="p-6 oily-card m-4 flex gap-3">
+            <input id="dm-input" type="text" placeholder="Message..." class="flex-1 bg-transparent px-2 outline-none">
+            <button onclick="sendDM()" class="bg-green-600 text-white w-14 h-12 rounded-2xl"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div id="auth-screen" class="fixed inset-0 z-[5000] bg-[#f1f5f9] flex flex-col items-center justify-center p-10">
-        <h1 class="text-6xl font-black italic tracking-tighter text-gray-900 mb-8">BK<span class="text-green-600">.</span></h1>
+    <div id="auth-screen" class="fixed inset-0 z-[6000] bg-[#f1f5f9] flex flex-col items-center justify-center p-10 text-center">
+        <h1 class="text-6xl font-black italic text-gray-900 mb-8">BK<span class="text-green-600">.</span></h1>
         <div class="w-full max-w-xs space-y-4">
             <div class="oily-card p-1"><input id="login-user" type="text" placeholder="IDENTITY" class="w-full p-4 bg-transparent outline-none font-bold text-center"></div>
             <div class="oily-card p-1"><input id="login-pass" type="password" placeholder="ACCESS KEY" class="w-full p-4 bg-transparent outline-none font-bold text-center"></div>
-            <button onclick="handleLogin()" class="w-full bg-gray-900 text-white py-5 rounded-[30px] font-black shadow-2xl active:scale-95">ESTABLISH SESSION</button>
+            <button onclick="handleLogin()" class="w-full bg-gray-900 text-white py-5 rounded-[30px] font-black shadow-2xl">ESTABLISH SESSION</button>
         </div>
     </div>
 
     <script>
         const config = { apiKey: "AIzaSyA6jP9_1n97bKi6Eo2qtLVDf1U4xH_p8TQ", databaseURL: "https://i-am-here-44a35-default-rtdb.firebaseio.com" };
         firebase.initializeApp(config); const rdb = firebase.database();
-        let me = ""; let activeChat = "";
+        let me = ""; let activeChat = ""; let localStream;
+
+        function requestNotify() {
+            if ("Notification" in window) {
+                Notification.requestPermission().then(p => { if(p === 'granted') console.log("Alerts Enabled"); });
+            }
+        }
 
         function toggleSidebar(open) {
             document.getElementById('side-bar').classList.toggle('open', open);
@@ -102,89 +119,98 @@
             toggleSidebar(false);
         }
 
-        function handleLogin(uIn, pIn) {
-            const u = uIn || document.getElementById('login-user').value.trim().toLowerCase();
-            const p = pIn || document.getElementById('login-pass').value; if(!u || !p) return;
+        function handleLogin() {
+            const u = document.getElementById('login-user').value.trim().toLowerCase();
+            const p = document.getElementById('login-pass').value; if(!u || !p) return;
             rdb.ref(`users/${u}`).once('value', snap => {
                 if(!snap.exists()) rdb.ref(`users/${u}`).set({ pass: p, aura: 10 });
-                else if(snap.val().pass !== p) return alert("Incorrect Key");
+                else if(snap.val().pass !== p) return alert("Wrong Key");
                 me = u; localStorage.setItem('bk_login', JSON.stringify({u, p}));
                 document.getElementById('auth-screen').style.display = 'none';
                 document.getElementById('side-user').innerText = `@${me}`;
+                requestNotify();
+                listenForCalls();
                 loadData();
             });
         }
 
         function loadData() {
-            // Sort friends by interaction time to keep recent at top
             rdb.ref(`friends/${me}`).on('value', snap => {
                 const list = document.getElementById('chat-list'); list.innerHTML = "";
-                let friends = [];
-                snap.forEach(f => { friends.push({ id: f.key, last: f.val().last || 0 }); });
-                friends.sort((a, b) => b.last - a.last);
-                
-                friends.forEach(f => {
+                let arr = []; snap.forEach(f => { arr.push({id: f.key, last: f.val().last || 0}); });
+                arr.sort((a,b) => b.last - a.last).forEach(f => {
                     list.innerHTML += `<div onclick="updateTimeAndOpen('${f.id}')" class="oily-card p-5 flex items-center gap-4 cursor-pointer">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-black text-xl shadow-inner">${f.id.charAt(0).toUpperCase()}</div>
-                        <div class="flex-1"><h4 class="font-black text-gray-800 uppercase tracking-tight">@${f.id}</h4><p class="text-xs text-green-500 font-bold">Tap to Open</p></div>
-                        <i class="fa-solid fa-chevron-right text-gray-200"></i>
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-black">${f.id[0].toUpperCase()}</div>
+                        <div class="flex-1"><h4 class="font-black">@${f.id}</h4><p class="text-xs text-green-500 font-bold">Online</p></div>
                     </div>`;
                 });
             });
-
-            rdb.ref('users').on('value', snap => {
-                const list = document.getElementById('leaderboard-list'); list.innerHTML = "";
-                const users = snap.val(); let uArr = [];
-                for(let id in users) { if(id !== 'batoor') uArr.push({id, ...users[id]}); }
-                uArr.sort((a,b) => (b.aura||0) - (a.aura||0));
-                document.getElementById('aura-pill').innerText = `AURA: ${users[me].aura||0}`;
-                list.innerHTML = `<div class="oily-card p-6 border-2 border-orange-200/50 flex justify-between items-center"><span class="batoor-text text-2xl italic tracking-tighter uppercase">1. Batoor Khan</span><span class="text-orange-500 font-black text-3xl">∞</span></div>`;
-                uArr.forEach((u, i) => {
-                    list.innerHTML += `<div class="oily-card p-5 flex justify-between items-center ${u.id===me?'ring-2 ring-green-400':''}">
-                        <div class="flex items-center gap-4"><span class="text-gray-300 font-black text-lg">#${i+2}</span><span class="font-black text-gray-700 uppercase tracking-tight">@${u.id}</span></div>
-                        <span class="font-black text-green-600 text-xl">${u.aura||0}</span>
-                    </div>`;
-                });
+            // Listen for background messages for notifications
+            rdb.ref(`chats`).on('child_added', snap => {
+                if(snap.key.includes(me)) {
+                    snap.ref.limitToLast(1).on('child_added', m => {
+                        const d = m.val();
+                        if(d.sender !== me && d.time > Date.now() - 5000) {
+                            if(document.hidden) new Notification("BK CHAT", { body: `@${d.sender}: ${d.text}` });
+                        }
+                    });
+                }
             });
         }
 
-        function updateTimeAndOpen(id) {
-            rdb.ref(`friends/${me}/${id}`).update({ last: Date.now() });
-            openChat(id);
+        async function startCall(type) {
+            document.getElementById('call-screen').classList.remove('hidden');
+            localStream = await navigator.mediaDevices.getUserMedia({ video: type==='video', audio: true });
+            document.getElementById('localVideo').srcObject = localStream;
+            rdb.ref(`calls/${activeChat}`).set({ caller: me, type: type, status: 'ringing' });
         }
 
+        function listenForCalls() {
+            rdb.ref(`calls/${me}`).on('value', snap => {
+                const call = snap.val();
+                if(call && call.status === 'ringing') {
+                    if(confirm(`Incoming ${call.type} call from @${call.caller}`)) {
+                        rdb.ref(`calls/${me}`).update({ status: 'connected' });
+                        startCall(call.type); // Simplification for demo
+                    }
+                }
+            });
+        }
+
+        function endCall() {
+            if(localStream) localStream.getTracks().forEach(t => t.stop());
+            document.getElementById('call-screen').classList.add('hidden');
+            rdb.ref(`calls/${activeChat}`).remove();
+            rdb.ref(`calls/${me}`).remove();
+        }
+
+        function updateTimeAndOpen(id) { rdb.ref(`friends/${me}/${id}`).update({ last: Date.now() }); openChat(id); }
         function openChat(id) {
             activeChat = id; document.getElementById('dm-target-name').innerText = `@${id}`;
             document.getElementById('view-dm').classList.remove('hidden');
-            const chatID = me < id ? `${me}_${id}` : `${id}_${me}`;
-            rdb.ref(`chats/${chatID}`).on('value', snap => {
+            const cid = me < id ? `${me}_${id}` : `${id}_${me}`;
+            rdb.ref(`chats/${cid}`).on('value', snap => {
                 const box = document.getElementById('dm-messages'); box.innerHTML = "";
-                snap.forEach(m => {
-                    const d = m.val(); const isMe = d.sender === me;
-                    box.innerHTML += `<div class="p-4 msg-bubble max-w-[80%] font-medium text-sm ${isMe?'msg-me':'msg-them text-gray-800'}">${d.text}</div>`;
+                snap.forEach(m => { 
+                    const d = m.val();
+                    box.innerHTML += `<div class="p-4 msg-bubble max-w-[80%] text-sm ${d.sender===me?'msg-me':'msg-them'}">${d.text}</div>`;
                 });
                 box.scrollTo(0, box.scrollHeight);
             });
         }
-
         function sendDM() {
             const txt = document.getElementById('dm-input').value; if(!txt) return;
             rdb.ref(`friends/${me}/${activeChat}`).update({ last: Date.now() });
-            const chatID = me < activeChat ? `${me}_${activeChat}` : `${activeChat}_${me}`;
-            rdb.ref(`chats/${chatID}`).push({ sender: me, text: txt });
+            const cid = me < activeChat ? `${me}_${activeChat}` : `${activeChat}_${me}`;
+            rdb.ref(`chats/${cid}`).push({ sender: me, text: txt, time: Date.now() });
             document.getElementById('dm-input').value = "";
         }
-
         function closeDM() { document.getElementById('view-dm').classList.add('hidden'); }
         function addFriend() {
             const id = document.getElementById('friend-search').value.trim().toLowerCase();
-            if(!id || id === me) return;
-            rdb.ref(`users/${id}`).once('value', s => {
-                if(s.exists()) rdb.ref(`friends/${me}/${id}`).set({ last: Date.now() });
-                else alert("User not found");
-            });
+            if(id && id !== me) rdb.ref(`friends/${me}/${id}`).set({ last: Date.now() });
         }
-        function checkPersistence() { const s = localStorage.getItem('bk_login'); if(s) { const {u, p} = JSON.parse(s); handleLogin(u, p); } }
+        function checkPersistence() { const s = localStorage.getItem('bk_login'); if(s) handleLogin(); }
         function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
