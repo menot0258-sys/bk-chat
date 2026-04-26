@@ -1,4 +1,4 @@
-# 🌐 BK Chat — Official Repository
+# 🌐 BK Chat By Batoor Khan
 
 **BK Chat** is a next-generation social media application designed and engineered by **Batoor Khan**. This project is the flagship of the **BK Ecosystem**, showcasing the intersection of advanced **UI/UX Strategy** and **Full-Stack Engineering**.
 
