@@ -1,253 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta name="google-site-verification" content="2TRPI5jsrck9RPU1ogbtUgFEr76cpSGQm0gWlYzKfI8" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BK CHAT - Liquid Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>BATOOR KHAN | 3D VIZ</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap');
-        :root { --accent: #008069; --batoor: linear-gradient(135deg, #ff9d00, #ff0055); --oily: 0 25px 60px -12px rgba(0,0,0,0.18); }
-        body { font-family: 'Outfit', sans-serif; background: #f1f5f9; overflow: hidden; height: 100vh; }
-        .oily-card { background: #fff; border-radius: 30px; box-shadow: var(--oily); border: 1px solid #fff; transition: 0.3s; }
-        .viewport { display: flex; width: 200%; height: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .screen { width: 50%; height: 100vh; overflow-y: auto; padding-top: 90px; padding-bottom: 120px; }
-        #side-bar { position: fixed; left: -100%; top: 0; width: 280px; height: 100%; background: white; z-index: 3000; transition: 0.4s; box-shadow: 30px 0 60px rgba(0,0,0,0.15); }
-        #side-bar.open { left: 0; }
-        video { transform: scaleX(-1); object-fit: cover; border-radius: 24px; background: #000; width: 100%; height: 100%; }
-        #localVideo { width: 100px; height: 140px; position: absolute; bottom: 120px; right: 20px; border: 2px solid white; z-index: 10; }
-        .batoor-text { background: var(--batoor); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
-        .msg-me { background: #e2ffc7; align-self: flex-end; border-radius: 20px 20px 4px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        .msg-them { background: white; align-self: flex-start; border-radius: 20px 20px 20px 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        body { margin: 0; background: #000; overflow: hidden; font-family: monospace; }
+        #canvas-container { width: 100vw; height: 100vh; }
+        .hud { position: absolute; top: 20px; left: 20px; color: #00f2ff; border-left: 2px solid #00f2ff; padding-left: 15px; pointer-events: none; }
     </style>
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Batoor Khan",
-  "url": "https://menot0258-sys.github.io/bk-chat/",
-  "jobTitle": "Full-Stack Developer & Product Visionary",
-  "description": "Expert in UI/UX Strategy, IoT, and Systems Integration.",
-  "knowsAbout": [
-    "UI Design", "UX Strategy", "3D Modeling", "IoT", 
-    "Front-End Development", "API Systems"
-  ],
-  "sameAs": [
-    "https://github.com/menot0258-sys"
-  ]
-}
-</script>
 </head>
-<body onload="checkPersistence()">
+<body>
 
-    <header class="fixed top-0 w-full max-w-md left-1/2 -translate-x-1/2 z-[100] bg-white/70 backdrop-blur-xl px-6 py-5 flex justify-between items-center border-b border-white">
-        <div class="flex items-center gap-4">
-            <button onclick="toggleSidebar(true)" class="w-11 h-11 oily-card flex items-center justify-center"><i class="fa-solid fa-bars-staggered"></i></button>
-            <h1 id="screen-title" class="text-2xl font-black">Chats</h1>
-        </div>
-        <div id="aura-pill" class="bg-white/90 px-5 py-2 rounded-2xl text-[11px] font-black shadow-lg italic">AURA: 0</div>
-    </header>
+<div class="hud">
+    <strong>COMMANDER: BATOOR KHAN</strong><br>
+    STATUS: ORBITAL 3D RENDER ACTIVE<br>
+    <span id="coords">WAITING FOR SAT...</span>
+</div>
 
-    <div id="overlay" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/30 backdrop-blur-md z-[2500] hidden"></div>
-    <div id="side-bar" class="flex flex-col">
-        <div class="p-8 bg-gray-900 text-white rounded-br-[50px] shadow-2xl relative">
-            <input type="file" id="logo-upload" class="hidden" accept="image/*" onchange="uploadLogo(this)">
-            <label for="logo-upload" class="cursor-pointer">
-                <img id="user-logo" src="https://ui-avatars.com/api/?name=BK&background=008069&color=fff" class="w-16 h-16 rounded-2xl mb-4 object-cover shadow-lg border-2 border-white/20">
-            </label>
-            <h2 id="side-user" class="text-xl font-black uppercase">@Guest</h2>
-        </div>
-        <nav class="p-6 space-y-3">
-            <button onclick="slide(0, 'Chats')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-message text-green-500"></i> Chats</button>
-            <button onclick="slide(1, 'Ranks')" class="w-full text-left p-4 rounded-2xl font-bold flex items-center gap-4 hover:bg-gray-50"><i class="fa-solid fa-crown text-orange-500"></i> Ranks</button>
-            <button onclick="logout()" class="w-full text-left p-4 text-red-500 font-bold mt-10">Logout</button>
-        </nav>
-    </div>
+<div id="canvas-container"></div>
 
-    <div id="main-viewport" class="viewport">
-        <section class="screen px-5">
-            <div class="mb-8 oily-card p-2 flex gap-2">
-                <input id="friend-search" type="text" placeholder="Add User ID..." class="flex-1 bg-transparent px-4 outline-none font-bold">
-                <button onclick="addFriend()" class="bg-green-600 text-white w-12 h-12 rounded-2xl font-black"><i class="fa-solid fa-plus"></i></button>
-            </div>
-            <div id="chat-list" class="space-y-4"></div>
-        </section>
-        <section class="screen px-5">
-            <div id="leaderboard-list" class="space-y-4"></div>
-        </section>
-    </div>
+<script src="https://cloudflare.com"></script>
 
-    <div id="call-screen" class="fixed inset-0 bg-black z-[5000] hidden">
-        <video id="remoteVideo" autoplay playsinline></video>
-        <video id="localVideo" autoplay playsinline muted></video>
-        <div class="absolute bottom-16 left-0 w-full flex justify-center gap-8">
-            <button onclick="endCall()" class="w-16 h-16 bg-red-500 text-white rounded-full text-2xl shadow-2xl"><i class="fa-solid fa-phone-slash"></i></button>
-        </div>
-    </div>
+<script>
+    // 1. Setup Scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    <div id="view-dm" class="fixed inset-0 bg-[#f8fafc] z-[4000] hidden flex flex-col">
-        <div class="p-5 bg-white flex items-center justify-between border-b">
-            <div class="flex items-center gap-4">
-                <button onclick="closeDM()" class="w-10 h-10 bg-gray-100 rounded-xl"><i class="fa-solid fa-chevron-left"></i></button>
-                <h3 id="dm-target-name" class="font-black uppercase">User</h3>
-            </div>
-            <div class="flex gap-4">
-                <button onclick="initiateCall('video')" class="w-10 h-10 text-green-600"><i class="fa-solid fa-video"></i></button>
-            </div>
-        </div>
-        <div id="dm-messages" class="flex-1 overflow-y-auto p-5 flex flex-col space-y-2 no-scrollbar"></div>
-        <div class="p-6 oily-card m-4 flex gap-3">
-            <input id="dm-input" type="text" placeholder="Message..." class="flex-1 bg-transparent outline-none">
-            <button onclick="sendDM()" class="bg-green-600 text-white w-12 h-10 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
+    // 2. Create Earth (A simple sphere)
+    const geometry = new THREE.SphereGeometry(5, 32, 32);
+    const material = new THREE.MeshPhongMaterial({ 
+        color: 0x2233ff, 
+        wireframe: true // Makes it look like a "Hacker" grid
+    });
+    const earth = new THREE.Mesh(geometry, material);
+    scene.add(earth);
 
-    <div id="auth-screen" class="fixed inset-0 z-[6000] bg-[#f1f5f9] flex flex-col items-center justify-center p-10">
-        <h1 class="text-6xl font-black italic text-gray-900 mb-8">BK<span class="text-green-600">.</span></h1>
-        <div class="w-full max-w-xs space-y-4">
-            <div class="oily-card p-1"><input id="login-user" type="text" placeholder="IDENTITY" class="w-full p-4 bg-transparent outline-none font-bold text-center"></div>
-            <div class="oily-card p-1"><input id="login-pass" type="password" placeholder="KEY" class="w-full p-4 bg-transparent outline-none font-bold text-center"></div>
-            <button onclick="handleLogin()" class="w-full bg-gray-900 text-white py-5 rounded-[30px] font-black shadow-2xl">CONNECT</button>
-        </div>
-    </div>
+    // 3. Add Light
+    const light = new THREE.PointLight(0xffffff, 1, 100);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x333333));
 
-    <script>
-        const config = { apiKey: "AIzaSyA6jP9_1n97bKi6Eo2qtLVDf1U4xH_p8TQ", databaseURL: "https://i-am-here-44a35-default-rtdb.firebaseio.com" };
-        firebase.initializeApp(config); const rdb = firebase.database();
-        let me = ""; let activeChat = ""; let localStream;
+    // 4. Create ISS Marker (Small red glowing cube)
+    const issGeom = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+    const issMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const iss = new THREE.Mesh(issGeom, issMat);
+    scene.add(iss);
 
-        function toggleSidebar(open) {
-            document.getElementById('side-bar').classList.toggle('open', open);
-            document.getElementById('overlay').style.display = open ? 'block' : 'none';
-        }
+    camera.position.z = 15;
 
-        function slide(index, title) {
-            document.getElementById('main-viewport').style.transform = `translateX(-${index * 50}%)`;
-            document.getElementById('screen-title').innerText = title;
-            toggleSidebar(false);
-        }
+    // 5. Track ISS
+    async function track() {
+        try {
+            const res = await fetch('https://wheretheiss.at');
+            const data = await res.json();
+            
+            // Convert Lat/Lon to 3D Coordinates
+            const lat = data.latitude * (Math.PI / 180);
+            const lon = -data.longitude * (Math.PI / 180);
+            const radius = 5.5; // Slightly above Earth surface
 
-        function handleLogin() {
-            const u = document.getElementById('login-user').value.trim().toLowerCase();
-            const p = document.getElementById('login-pass').value; if(!u || !p) return;
-            rdb.ref(`users/${u}`).once('value', snap => {
-                if(!snap.exists()) rdb.ref(`users/${u}`).set({ pass: p, aura: 10, logo: "" });
-                else if(snap.val().pass !== p) return alert("Wrong Key");
-                me = u; localStorage.setItem('bk_login', JSON.stringify({u, p}));
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('side-user').innerText = `@${me}`;
-                if(snap.val().logo) document.getElementById('user-logo').src = snap.val().logo;
-                setupSystem();
-            });
-        }
+            iss.position.x = radius * Math.cos(lat) * Math.cos(lon);
+            iss.position.y = radius * Math.sin(lat);
+            iss.position.z = radius * Math.cos(lat) * Math.sin(lon);
 
-        function setupSystem() {
-            Notification.requestPermission();
-            listenForCalls();
-            loadData();
-        }
+            document.getElementById('coords').innerText = `LAT: ${data.latitude.toFixed(2)} LON: ${data.longitude.toFixed(2)}`;
+        } catch (e) { console.log("Link down..."); }
+    }
 
-        function loadData() {
-            // RANKS LOGIC (FIXED)
-            rdb.ref('users').on('value', snap => {
-                const list = document.getElementById('leaderboard-list'); list.innerHTML = "";
-                let users = []; snap.forEach(u => { if(u.key !== 'batoor') users.push({id: u.key, ...u.val()}); });
-                users.sort((a,b) => (b.aura||0) - (a.aura||0));
-                
-                document.getElementById('aura-pill').innerText = `AURA: ${snap.val()[me].aura||0}`;
-                list.innerHTML = `<div class="oily-card p-6 border-2 border-orange-200 flex justify-between items-center"><span class="batoor-text text-xl italic uppercase">1. Batoor Khan</span><span class="text-orange-500 font-black text-2xl">∞</span></div>`;
-                users.forEach((u, i) => {
-                    list.innerHTML += `<div class="oily-card p-5 flex justify-between items-center ${u.id===me?'ring-2 ring-green-400':''}">
-                        <div class="flex items-center gap-4"><span class="text-gray-300 font-black">#${i+2}</span><span class="font-black uppercase">@${u.id}</span></div>
-                        <span class="font-black text-green-600 text-lg">${u.aura||0}</span>
-                    </div>`;
-                });
-            });
+    function animate() {
+        requestAnimationFrame(animate);
+        earth.rotation.y += 0.001; // Earth slowly spins
+        renderer.render(scene, camera);
+    }
 
-            // CHATS LOGIC
-            rdb.ref(`friends/${me}`).on('value', snap => {
-                const list = document.getElementById('chat-list'); list.innerHTML = "";
-                let arr = []; snap.forEach(f => { arr.push({id: f.key, last: f.val().last || 0}); });
-                arr.sort((a,b) => b.last - a.last).forEach(f => {
-                    list.innerHTML += `<div onclick="updateTimeAndOpen('${f.id}')" class="oily-card p-5 flex items-center gap-4 cursor-pointer">
-                        <div class="w-14 h-14 rounded-2xl bg-green-600 flex items-center justify-center text-white font-black">${f.id[0].toUpperCase()}</div>
-                        <div class="flex-1"><h4 class="font-black uppercase">@${f.id}</h4><p class="text-xs text-green-500 font-bold uppercase">Online</p></div>
-                    </div>`;
-                });
-            });
-        }
-
-        async function initiateCall(type) {
-            document.getElementById('call-screen').classList.remove('hidden');
-            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            document.getElementById('localVideo').srcObject = localStream;
-            rdb.ref(`calls/${activeChat}`).set({ from: me, type, status: 'ringing', time: Date.now() });
-        }
-
-        function listenForCalls() {
-            rdb.ref(`calls/${me}`).on('value', snap => {
-                const call = snap.val();
-                if(call && call.status === 'ringing') {
-                    if(confirm(`Incoming Video from @${call.from}?`)) {
-                        rdb.ref(`calls/${me}`).update({ status: 'connected' });
-                        initiateCall('video');
-                    } else { rdb.ref(`calls/${me}`).remove(); }
-                }
-            });
-        }
-
-        function uploadLogo(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64 = e.target.result;
-                    document.getElementById('user-logo').src = base64;
-                    rdb.ref(`users/${me}`).update({ logo: base64 });
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function endCall() {
-            if(localStream) localStream.getTracks().forEach(t => t.stop());
-            document.getElementById('call-screen').classList.add('hidden');
-            rdb.ref(`calls/${me}`).remove();
-        }
-
-        function updateTimeAndOpen(id) { rdb.ref(`friends/${me}/${id}`).update({ last: Date.now() }); openChat(id); }
-        function openChat(id) {
-            activeChat = id; document.getElementById('dm-target-name').innerText = `@${id}`;
-            document.getElementById('view-dm').classList.remove('hidden');
-            const cid = me < id ? `${me}_${id}` : `${id}_${me}`;
-            rdb.ref(`chats/${cid}`).on('value', snap => {
-                const box = document.getElementById('dm-messages'); box.innerHTML = "";
-                snap.forEach(m => {
-                    const d = m.val();
-                    box.innerHTML += `<div class="p-4 msg-bubble max-w-[80%] text-sm ${d.sender===me?'msg-me':'msg-them'}">${d.text}</div>`;
-                });
-                box.scrollTo(0, box.scrollHeight);
-            });
-        }
-
-        function sendDM() {
-            const txt = document.getElementById('dm-input').value; if(!txt) return;
-            rdb.ref(`friends/${me}/${activeChat}`).update({ last: Date.now() });
-            const cid = me < activeChat ? `${me}_${activeChat}` : `${activeChat}_${me}`;
-            rdb.ref(`chats/${cid}`).push({ sender: me, text: txt, time: Date.now() });
-            document.getElementById('dm-input').value = "";
-        }
-
-        function closeDM() { document.getElementById('view-dm').classList.add('hidden'); }
-        function addFriend() {
-            const id = document.getElementById('friend-search').value.trim().toLowerCase();
-            if(id && id !== me) rdb.ref(`friends/${me}/${id}`).set({ last: Date.now() });
-        }
-        function checkPersistence() { const s = localStorage.getItem('bk_login'); if(s) handleLogin(); }
-        function logout() { localStorage.clear(); location.reload(); }
-    </script>
+    setInterval(track, 3000);
+    animate();
+    track();
+</script>
 </body>
 </html>
